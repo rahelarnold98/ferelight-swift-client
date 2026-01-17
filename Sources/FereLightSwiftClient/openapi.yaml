@@ -264,7 +264,6 @@ paths:
                   description: The object ID to find the segment in.
                 timestamp:
                   type: number
-                  format: float
                   description: The timestamp to match against.
       responses:
         "200":
