@@ -100,7 +100,7 @@ public struct FereLightClient : Sendable {
         
         let message = try response.ok.body.json
         
-        return message.map { ($0.segmentid!, $0.score!, clipVector: $0.clipvector) }
+        return message.map { ($0.segmentid!, $0.score!, clipVector: $0.clipvector?.map(Float.init)) }
     }
     
     /// Queries the database using the provided segment as an example.
@@ -123,7 +123,7 @@ public struct FereLightClient : Sendable {
             (
                 segmentId: $0.segmentid!,
                 score: $0.score!,
-                clipVector: $0.clipvector
+                $0.clipvector?.map(Float.init)
             )
         }
     }
