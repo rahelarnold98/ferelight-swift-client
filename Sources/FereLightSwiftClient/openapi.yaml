@@ -55,7 +55,6 @@ components:
           type: array
           items:
             type: number
-            format: float
           nullable: true
           description: CLIP embedding vector (e.g., 265 floats)
 paths:
