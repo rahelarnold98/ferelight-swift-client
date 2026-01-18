@@ -78,7 +78,7 @@ public struct FereLightClient : Sendable {
     ///
     /// - Returns: Segment information array.
     public func getSegmentInfos(database: String, segmentIds: [String]) async throws -> [(segmentId: String, objectId: String, segmentNumber: Int, segmentStart: Int, segmentEnd: Int, segmentStartAbs: Double, segmentEndAbs: Double)] {
-        let response = try await client.post_sol_segmentinfos(body: .json(.init(database: database, segmentids: segmentIds, )))
+        let response = try await client.post_sol_segmentinfos(body: .json(.init(database: database, segmentids: segmentIds)))
         
         let message = try response.ok.body.json
         
