@@ -2,7 +2,7 @@ openapi: 3.0.1
 info:
   title: FERElight
   description: API for the lightweight feature extraction and retrieval engine (FERElight).
-  version: 1.1.0
+  version: 1.0.0
 components:
   schemas:
     multimediaobject:
@@ -49,10 +49,14 @@ components:
       properties:
         segmentid:
           type: string
-          description: The unique identifier of the segment.
         score:
           type: number
-          description: The similarity score of the segment.
+        clipvector:
+          type: array
+          items:
+            type: number
+          nullable: true
+          description: CLIP embedding vector (e.g., 265 floats)
 paths:
   /objectinfo/{database}/{objectid}:
     get:
@@ -204,10 +208,14 @@ paths:
                   description: The ASR text.
                 mergetype:
                   type: string
-                  description: Merge Type for the similaritytext
+                  description: Type for merging two similarity queries, possible values are "id_intersection" and "vector_mean"
                 limit:
                   type: integer
                   description: The maximum number of results to return.
+                includevectors:
+                  type: boolean
+                  description: If true, include clipvector for each returned segment
+                  default: false
       responses:
         "200":
           description: "OK"
@@ -237,6 +245,10 @@ paths:
                   type: integer
                   description: The maximum number of results to return.
                   default: 10
+                includevectors:
+                  type: boolean
+                  description: If true, include clipvector for each returned segment
+                  default: false
       responses:
         "200":
           description: OK
@@ -264,6 +276,7 @@ paths:
                   description: The object ID to find the segment in.
                 timestamp:
                   type: number
+                  format: float
                   description: The timestamp to match against.
       responses:
         "200":

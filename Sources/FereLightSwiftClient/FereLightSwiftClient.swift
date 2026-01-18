@@ -78,7 +78,7 @@ public struct FereLightClient : Sendable {
     ///
     /// - Returns: Segment information array.
     public func getSegmentInfos(database: String, segmentIds: [String]) async throws -> [(segmentId: String, objectId: String, segmentNumber: Int, segmentStart: Int, segmentEnd: Int, segmentStartAbs: Double, segmentEndAbs: Double)] {
-        let response = try await client.post_sol_segmentinfos(body: .json(.init(database: database, segmentids: segmentIds)))
+        let response = try await client.post_sol_segmentinfos(body: .json(.init(database: database, segmentids: segmentIds, )))
         
         let message = try response.ok.body.json
         
@@ -94,12 +94,13 @@ public struct FereLightClient : Sendable {
     ///   - limit: Maximum number of results to return.
     ///
     /// - Returns: Array of segment ID and similarity score pairs.
-    public func query(database: String, similarityText: String?, ocrText: String?, asrtext: String?, mergetype: String?, limit: Int?) async throws -> [(segmentId: String, score: Double)] {
-        let response = try await client.post_sol_query(body: .json(.init(database: database, similaritytext: similarityText, ocrtext: ocrText, asrtext: asrtext, mergetype: mergetype, limit: limit)))
+    public func query(database: String, similarityText: String?, ocrText: String?, asrtext: String?, mergetype: String?, limit: Int?, includeVectors: Bool = false
+    ) async throws -> [(segmentId: String, score: Double, clipVector: [Float]?)] {
+        let response = try await client.post_sol_query(body: .json(.init(database: database, similaritytext: similarityText, ocrtext: ocrText, asrtext: asrtext, mergetype: mergetype, limit: limit, includeVectors: includeVectors)))
         
         let message = try response.ok.body.json
         
-        return message.map { ($0.segmentid!, $0.score!) }
+        return message.map { ($0.segmentid!, $0.score!, clipVector: $0.clipvector) }
     }
     
     /// Queries the database using the provided segment as an example.
@@ -110,13 +111,23 @@ public struct FereLightClient : Sendable {
     ///   - limit: Maximum number of results to return.
     ///
     /// - Returns: Array of segment ID and similarity score pairs.
-    public func queryByExample(database: String, segmentId: String, limit: Int?) async throws -> [(segmentId: String, score: Double)] {
-        let response = try await client.post_sol_querybyexample(body: .json(.init(database: database, segmentid: segmentId, limit: limit)))
-        
+    public func queryByExample(database: String,segmentId: String, limit: Int?, includeVectors: Bool = false
+    ) async throws -> [(segmentId: String, score: Double, clipVector: [Float]?)] {
+        let response = try await client.post_sol_querybyexample(
+            body: .json(.init(database: database, segmentid: segmentId, limit: limit, includevectors: includeVectors))
+        )
+
         let message = try response.ok.body.json
-        
-        return message.map { ($0.segmentid!, $0.score!) }
+
+        return message.map {
+            (
+                segmentId: $0.segmentid!,
+                score: $0.score!,
+                clipVector: $0.clipvector
+            )
+        }
     }
+
     
     /// Retrieve the segment at the specified time within the object.
     ///
