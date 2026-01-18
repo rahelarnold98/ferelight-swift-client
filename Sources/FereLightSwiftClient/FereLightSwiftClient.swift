@@ -96,7 +96,7 @@ public struct FereLightClient : Sendable {
     /// - Returns: Array of segment ID and similarity score pairs.
     public func query(database: String, similarityText: String?, ocrText: String?, asrtext: String?, mergetype: String?, limit: Int?, includeVectors: Bool = false
     ) async throws -> [(segmentId: String, score: Double, clipVector: [Float]?)] {
-        let response = try await client.post_sol_query(body: .json(.init(database: database, similaritytext: similarityText, ocrtext: ocrText, asrtext: asrtext, mergetype: mergetype, limit: limit, includeVectors: includeVectors)))
+        let response = try await client.post_sol_query(body: .json(.init(database: database, similaritytext: similarityText, ocrtext: ocrText, mergetype: mergetype, limit: limit, includeVectors: includeVectors)))
         
         let message = try response.ok.body.json
         
